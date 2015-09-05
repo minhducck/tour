@@ -1,103 +1,103 @@
-Concurrency
-Go provides concurrency constructions as part of the core language. This lessons presents them and gives some examples on how to use it.
+Lập trình đồng thời
+Go cung cấp các công cụ để lập trình đồng thời như là một phần lõi của ngôn ngữ. Bài học này sẽ giới thiệu các công cụ này và các ví dụ về cách sử dụng chúng.
 
 The Go Authors
 http://golang.org
 
 * Goroutines
 
-A _goroutine_ is a lightweight thread managed by the Go runtime.
+Một _goroutine_ là một luồng "hạng nhẹ" (lightweight thread) được quản lý bởi trình chạy của Go.
 
 	go f(x, y, z)
 
-starts a new goroutine running
+sẽ bắt đầu một goroutine mới và chạy hàm
 
 	f(x, y, z)
 
-The evaluation of `f`, `x`, `y`, and `z` happens in the current goroutine and the execution of `f` happens in the new goroutine.
+Để chạy được hàm `f`, các giá trị `x`, `y` và `z` sẽ được tính toán ở goroutine hiện tại, và việc tính toán giá trị của hàm `f` sẽ được thực hiện ở goroutine mới.
 
-Goroutines run in the same address space, so access to shared memory must be synchronized. The [[http://golang.org/pkg/sync/][`sync`]] package provides useful primitives, although you won't need them much in Go as there are other primitives. (See the next slide.)
+Goroutine được chạy ở cùng một không gian địa chỉ trong bộ nhớ, vì vậy việc truy cập bộ nhớ chia sẻ (shared memory) phải được đồng bộ. Gói [[http://golang.org/pkg/sync/][`sync`]] cung cấp các hàm cơ bản hữu ích, mặc dù bạn không cần sử dụng nó nhiều như các hàm cơ bản khác. (Xem slide tiếp theo.)
 
 .play concurrency/goroutines.go
 
-* Channels
+* Kênh
 
-Channels are a typed conduit through which you can send and receive values with the channel operator, `<-`.
+Một kênh (channel) là một đường dẫn thông qua đó bạn có thể gửi và nhận các giá trị, thông qua toán tử `<-` của kênh.
 
-	ch <- v    // Send v to channel ch.
-	v := <-ch  // Receive from ch, and
-	           // assign value to v.
+	ch <- v    // Gửi giá trị v đến kênh ch.
+	v := <-ch  // Nhận giá trị từ ch, và
+	           // gán giá trị đó cho v.
 
-(The data flows in the direction of the arrow.)
+(Các luồng dữ liệu theo hướng mũi tên.)
 
-Like maps and slices, channels must be created before use:
+Cũng như map và slice, kênh phải được khởi tạo trước khi sử dụng:
 
 	ch := make(chan int)
 
-By default, sends and receives block until the other side is ready. This allows goroutines to synchronize without explicit locks or condition variables.
+Mặc định, việc gửi và nhận các khối sẽ bị chặn lại cho đến khi phía bên kia đã sẵn sàng. Điều này cho phép các goroutine được đồng bộ hoá mà không cần phải sử dụng các khoá tường minh hoặc các biến điều kiện.
 
 .play concurrency/channels.go
 
-* Buffered Channels
+* Kênh đệm
 
-Channels can be _buffered_.  Provide the buffer length as the second argument to `make` to initialize a buffered channel:
+Các kênh có thể sử dụng các _bộ_đệm_. Cung cấp một tham số thứ hai là chiều dài của bộ đệm cho hàm `make`, sẽ khởi tạo một kênh được đệm:
 
 	ch := make(chan int, 100)
 
-Sends to a buffered channel block only when the buffer is full. Receives block when the buffer is empty.
+Việc gửi dữ liệu đến một kênh được đệm sẽ chỉ bị chặn lại khi bộ đệm đầy. Việc nhận dữ liệu sẽ bị chặn lại khi bộ đệm là rỗng.
 
-Modify the example to overfill the buffer and see what happens.
+Bạn hãy thử thay đổi ví dụ này để làm đầy bộ đệm và xem điều gì sẽ xảy ra.
 
 .play concurrency/buffered-channels.go
 
-* Range and Close
+* Range và Close
 
-A sender can `close` a channel to indicate that no more values will be sent. Receivers can test whether a channel has been closed by assigning a second parameter to the receive expression: after
+Một bộ gửi có thể `đóng` (`close`) một kênh để cho biết là không có giá trị nào sẽ được gửi nữa. Các bộ nhận sẽ kiểm tra xem một kênh đã được đóng lại hay chưa bằng cách gán thêm một tham số thứ hai trong biểu thức nhận. Sau khi gán:
 
 	v, ok := <-ch
 
-`ok` is `false` if there are no more values to receive and the channel is closed.
+`ok` sẽ là `false` nếu không có giá trị nào nữa để tiếp nhận, và kênh đã được đóng lại.
 
-The loop `for`i`:=`range`c` receives values from the channel repeatedly until it is closed.
+Vòng lặp `for`i`:=`range`c` sẽ nhận giá trị từ kênh một cách liên tục cho đến khi kênh này được đóng lại.
 
-*Note:* Only the sender should close a channel, never the receiver. Sending on a closed channel will cause a panic.
+*Chú*ý:* Chỉ có bộ gửi mới nên đóng một kênh, không bao giờ đóng tại bộ nhận. Việc gửi dữ liệu trên một kênh đã được đóng sẽ gây ra một panic.
 
-*Another*note*: Channels aren't like files; you don't usually need to close them. Closing is only necessary when the receiver must be told there are no more values coming, such as to terminate a `range` loop.
+*Chú*ý*khác*: Các kênh giống như file, bạn thường không cần phải đóng chúng. Việc đóng chỉ cần thiết khi bộ nhận phải được thông báo là sẽ không có giá trị tới nữa, chẳng hạn như để chấm dứt một vòng lặp `range`.
 
 .play concurrency/range-and-close.go
 
-* Select
+* Câu lệnh chọn
 
-The `select` statement lets a goroutine wait on multiple communication operations.
+Một câu lệnh `select` cho phép một `goroutine` lắng nghe trên nhiều kênh.
 
-A `select` blocks until one of its cases can run, then it executes that case.  It chooses one at random if multiple are ready.
+Câu lệnh select sẽ bị block lại cho đến khi một trong các lựa chọn bên trong nó có thể chạy. Trong trường hợp nhiều lựa chọn có thể chạy, nó sẽ chạy ngẫu nhiên một trong số các lựa chọn này.
 
 .play concurrency/select.go
 
-* Default Selection
+* Câu lệnh chọn mặc định
 
-The `default` case in a `select` is run if no other case is ready.
+Lựa chon `default` trong một câu lệnh `select` sẽ chạy nếu không có lựa chọn nào khác trong câu lệnh `select` sẵn sàng.
 
-Use a `default` case to try a send or receive without blocking:
+Bạn hãy thử sử dụng `default` để gửi hoặc nhận giá trị mà không bị chặn:
 
 	select {
 	case i := <-c:
-		// use i
+		// sử dụng i
 	default:
-		// receiving from c would block
+		// nhận giá trị từ c mà không bị chặn
 	}
 
 .play concurrency/default-selection.go
 
-* Exercise: Equivalent Binary Trees
+* Bài tập: Cây nhị phân tương đương
 
-There can be many different binary trees with the same sequence of values stored at the leaves. For example, here are two binary trees storing the sequence 1, 1, 2, 3, 5, 8, 13.
+Có thể có nhiều cây nhị phân khác nhau với cùng một chuỗi các giá trị được lưu trữ tại các lá. Ví dụ, đây là hai cây nhị phân cùng lưu trữ một chuỗi 1, 1, 2, 3, 5, 8, 13.
 
 .image /content/img/tree.png
 
-A function to check whether two binary trees store the same sequence is quite complex in most languages. We'll use Go's concurrency and channels to write a simple solution.
+Một hàm để kiểm tra xem hai cây nhị phân có cùng lưu trữ một chuỗi hay không là khá phức tạp ở hầu hết các ngôn ngữ. Chúng ta sẽ sử dụng lập trình đồng thời trong Go và các kênh để viết một giải pháp đơn giản.
 
-This example uses the `tree` package, which defines the type:
+Ví dụ này sử dụng gói `tree`, trong đó định nghĩa một kiểu:
 
 	type Tree struct {
 		Left  *Tree
@@ -108,72 +108,71 @@ This example uses the `tree` package, which defines the type:
 
 Continue description on [[javascript:click('.next-page')][next page]].
 
-* Exercise: Equivalent Binary Trees
+* Bài tập: Cây nhị phân tương đương (tiếp)
 
-*1.* Implement the `Walk` function.
+*1.* Cài đặt hàm `Walk`.
 
-*2.* Test the `Walk` function.
+*2.* Kiểm tra hàm `Walk` chạy đúng đắn.
 
-The function `tree.New(k)` constructs a randomly-structured binary tree holding the values `k`, `2k`, `3k`, ..., `10k`.
+Hàm `tree.New(k)` tạo một cây nhị phân mới một cách ngẫu nhiên để lưu các giá trị  `k`, `2k`, `3k`, ..., `10k`.
 
-Create a new channel `ch` and kick off the walker:
+Tạo một kênh mới `ch` và gọi hàm `walker`:
 
 	go Walk(tree.New(1), ch)
 
-Then read and print 10 values from the channel. It should be the numbers 1, 2, 3, ..., 10.
+Sau đó đọc và in ra 10 giá trị từ kênh này. Nó phải là các số 1, 2, 3, ..., 10.
 
-*3.* Implement the `Same` function using `Walk` to determine whether `t1` and `t2` store the same values.
+*3.* Cài đặt hàm `Same` sử dụng hàm `Walk` để xác định xem `t1` và `t2` có lưu trữ cùng giá trị hay không.
 
-*4.* Test the `Same` function.
+*4.* Kiểm tra hàm `Same` có hoạt động đúng đắn hay không.
 
-`Same(tree.New(1),`tree.New(1))` should return true, and `Same(tree.New(1),`tree.New(2))` should return false.
+`Same(tree.New(1),`tree.New(1))` phải trả về true, và `Same(tree.New(1),`tree.New(2))` phải trả về false.
 
 .play concurrency/exercise-equivalent-binary-trees.go
 
-* Exercise: Web Crawler
+* Bài tập: Web Crawler
 
-In this exercise you'll use Go's concurrency features to parallelize a web crawler.
+Trong bài tập này bạn sẽ sử dụng lập trình đồng thời trong Go để chạy đồng thời một web crawler.
 
-Modify the `Crawl` function to fetch URLs in parallel without fetching the same URL twice.
+Thay đổi hàm `Crawl` để lấy các URLs một cách đồng thời mà không lấy dữ liệu từ một URL hai lần.
 
 .play concurrency/exercise-web-crawler.go
 
 * Where to Go from here...
 
-#appengine: You can get started by
-#appengine: [[http://golang.org/doc/install/][installing Go]] or downloading the
+#appengine: Bạn có thể bắt đầu bằng việc
+#appengine: [[http://golang.org/doc/install/][cài đặt Go]] hoặc tải về
 #appengine: [[http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Go][Go App Engine SDK]].
 
-#appengine: Once you have Go installed, the
+#appengine: Khi bạn đã cài đặt xong Go, 
 The
-[[http://golang.org/doc/][Go Documentation]] is a great place to
-#appengine: continue.
-start.
-It contains references, tutorials, videos, and more.
+[[http://golang.org/doc/][Go Documentation]] là nơi rất tốt để bạn 
+#appengine: tiếp tục.
+bắt đầu.
+Nó chứa các tài liệu tham khảo, các hướng dẫn, video và nhiều thứ khác.
 
-To learn how to organize and work with Go code, watch [[http://www.youtube.com/watch?v=XCsL89YtqCs][this screencast]] or read [[http://golang.org/doc/code.html][How to Write Go Code]].
+Để tìm hiểu cách tổ chức và làm việc với Go code, xem thêm [[http://www.youtube.com/watch?v=XCsL89YtqCs][screencast]] này hoặc đọc thêm bài viết [[http://golang.org/doc/code.html][How to Write Go Code]].
 
-If you need help with the standard library, see the [[http://golang.org/pkg/][package reference]]. For help with the language itself, you might be surprised to find the [[http://golang.org/ref/spec][Language Spec]] is quite readable.
+Nếu bạn cần xem thêm với các thư viện chuẩn, xem thêm [[http://golang.org/pkg/][package reference]]. Nếu bạn cần hiểu thêm về chính ngôn ngữ Go, bạn sẽ ngạc nhiên là [[http://golang.org/ref/spec][Bản Đặc tả Ngôn ngữ Go]] dễ đọc thế nào.
 
-To further explore Go's concurrency model, watch
+Để tìm hiểu thêm về lập trình đồng thời trong Go, xem
 [[http://www.youtube.com/watch?v=f6kdp27TYZs][Go Concurrency Patterns]]
 ([[http://talks.golang.org/2012/concurrency.slide][slides]])
-and
+và 
 [[https://www.youtube.com/watch?v=QDDwwePbDtw][Advanced Go Concurrency Patterns]]
 ([[http://talks.golang.org/2013/advconc.slide][slides]])
-and read the
+và đọc thêm
 [[http://golang.org/doc/codewalk/sharemem/][Share Memory by Communicating]]
 codewalk.
 
-To get started writing web applications, watch
+Để bắt đầu việc viết các ứng dụng web, xem thêm
 [[http://vimeo.com/53221558][A simple programming environment]]
 ([[http://talks.golang.org/2012/simple.slide][slides]])
-and read the
-[[http://golang.org/doc/articles/wiki/][Writing Web Applications]] tutorial.
+và đọc hướng dẫn [[http://golang.org/doc/articles/wiki/][Writing Web Applications]].
 
-The [[http://golang.org/doc/codewalk/functions/][First Class Functions in Go]] codewalk gives an interesting perspective on Go's function types.
+Bạn có thể xem [[http://golang.org/doc/codewalk/functions/][First Class Functions in Go]] codewalk để thấy một khía cạnh thú vị của kiểu giá trị hàm (function value) trong Go.
 
-The [[http://blog.golang.org/][Go Blog]] has a large archive of informative Go articles.
+[[http://blog.golang.org/][Go Blog]] chứa một số lượng lớn các bài viết hữu ích về Go.
 
-Visit [[http://golang.org][golang.org]] for more.
+Bạn cũng có thể truy cập [[http://golang.org][golang.org]] để tìm hiểu thêm.
 

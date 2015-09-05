@@ -1,117 +1,115 @@
-More types: structs, slices, and maps.
-Learn how to define types based on existing ones: this lesson covers structs, arrays, slices, and maps.
+Các kiểu dữ liệu khác: cấu trúc, slice, và maps.
+Học cách làm thế nào định nghĩa được một kiểu dữ liệu mới dựa trên kiểu dữ liệu đã có: trong bài học này bạn sẽ học về cấu trúc, mảng, slice và map.
 
 The Go Authors
 http://golang.org
 
-* Pointers
+* Con trỏ
 
-Go has pointers.
-A pointer holds the memory address of a variable.
+Go có con trỏ (pointer). 
+Một con trỏ lưu trữ địa chỉ của một biến.
 
-The type `*T` is a pointer to a `T` value. Its zero value is `nil`.
+Kiểu `*T` là một con trỏ trỏ đến một giá trị kiểu `T`. Giá trị zero của một con trỏ là `nil`.
 
 	var p *int
 
-The `&` operator generates a pointer to its operand.
+Toán tử `&` dùng để lấy địa chỉ của một biến.
 
 	i := 42
 	p = &i
 
-The `*` operator denotes the pointer's underlying value.
+Toán tử `*` dùng để lấy giá trị của biến mà con trỏ đó trỏ đến.
 
-	fmt.Println(*p) // read i through the pointer p
-	*p = 21         // set i through the pointer p
+	fmt.Println(*p) // đọc giá trị i qua con trỏ p
+	*p = 21         // gán giá trị cho i thông qua con trỏ p
 
 This is known as "dereferencing" or "indirecting".
 
-Unlike C, Go has no pointer arithmetic.
+Không như C, trong Go không có các phép toán số học trên con trỏ.
 
 .play moretypes/pointers.go
 
-* Structs
+* Cấu trúc 
 
-A `struct` is a collection of fields.
-
-(And a `type` declaration does what you'd expect.)
+Một cấu trúc `struct` là một tập hợp các trường (field). (Và sử dụng một khai báo `type`.)
 
 .play moretypes/structs.go
 
-* Struct Fields
+* Các trường của cấu trúc
 
-Struct fields are accessed using a dot.
+Các trường của một cấu trúc được truy cập bằng cách sử dụng dấu chấm.
 
 .play moretypes/struct-fields.go
 
-* Pointers to structs
+* Con trỏ đến một cấu trúc
 
-Struct fields can be accessed through a struct pointer.
+Các trường của một cấu trúc có thể truy cập thông qua một con trỏ đến một cấu trúc. trúc
 
-The indirection through the pointer is transparent.
+Việc truy cập gián tiếp thông qua con trỏ là hoàn toàn trong suốt.
 
 .play moretypes/struct-pointers.go
 
-* Struct Literals
+* Khai báo một cấu trúc
 
-A struct literal denotes a newly allocated struct value by listing the values of its fields.
+Một cấu trúc được cấp phát mới bằng cách liệt kê các giá trị của các trường của nó.
 
-You can list just a subset of fields by using the `Name:` syntax. (And the order of named fields is irrelevant.)
+Bạn có thể liệt kê chỉ một tập con các trường bằng cách sử dụng cú pháp "tên-trường: " (Thứ tự của các tên trường là không quan trọng.)
 
-The special prefix `&` returns a pointer to the struct value.
+Tiền tố đặc biệt `&` trả về một con trỏ đến một cấu trúc.
 
 .play moretypes/struct-literals.go
 
-* Arrays
+* Mảng 
 
-The type `[n]T` is an array of `n` values of type `T`.
+Biểu thức `[n]T` chỉ một mảng `n` giá trị mang kiểu `T`.
 
-The expression
+Biểu thức
 
 	var a [10]int
 
-declares a variable `a` as an array of ten integers.
+khai báo một biến `a` như là một mảng 10 số nguyên.
 
-An array's length is part of its type, so arrays cannot be resized.
-This seems limiting, but don't worry;
-Go provides a convenient way of working with arrays.
+Chiều dài một mảng là một phần của kiểu của nó, vì vậy các mảng không thể thay đổi kích cỡ. 
+Điều này có vẻ hạn chế, nhưng đừng lo lắng, Go sẽ cung cấp cho bạn một cách thuật tiện để làm việc với mảng.
+
 
 .play moretypes/array.go
 
-* Slices
+* Slice 
 
-A slice points to an array of values and also includes a length.
+Một lát cắt (slice) được trỏ đến một mảng các giá trị, và mọi slice đều có một độ dài nào đó.
 
-`[]T` is a slice with elements of type `T`.
+`[]T` là một slice với các phần tử có kiểu `T`.
 
 .play moretypes/slices.go
 
 * Slicing slices
 
-Slices can be re-sliced, creating a new slice value that points to the same array.
+Một slice có thể được cắt lại, tạo ra một slice mới trỏ đến cùng một mảng.
 
-The expression
+Biểu thức
 
 	s[lo:hi]
 
-evaluates to a slice of the elements from `lo` through `hi-1`, inclusive. Thus
+trả về một slice các phần tử từ chỉ số `lo` đến `hi-1`, bao gồm giá trị ở cả hai đầu mút. Do đó
 
 	s[lo:lo]
 
-is empty and
+là rỗng và
 
 	s[lo:lo+1]
 
-has one element.
+có đúng một phần tử.
 
 .play moretypes/slicing-slices.go
 
-* Making slices
+* Tạo một slice
 
-Slices are created with the `make` function. It works by allocating a zeroed array and returning a slice that refers to that array:
+Các slice được tạo ra với hàm `make`. Nó hoạt động bằng cách khởi tạo một mảng các giá trị zero và trả về một slice trỏ đến mảng đó:
 
 	a := make([]int, 5)  // len(a)=5
 
-To specify a capacity, pass a third argument to `make`:
+Để xác định sức chứa (capacity) cho một slice, bạn truyền một tham số thứ ba cho hàm `make`:
 
 	b := make([]int, 0, 5) // len(b)=0, cap(b)=5
 
@@ -120,142 +118,142 @@ To specify a capacity, pass a third argument to `make`:
 
 .play moretypes/making-slices.go
 
-* Nil slices
+* Nil slice
 
-The zero value of a slice is `nil`.
+Giá trị zero của một slice là `nil`.
 
-A nil slice has a length and capacity of 0.
+Một slice nil có độ dài và sức chứa là 0.
 
 .play moretypes/nil-slices.go
 
-* Adding elements to a slice
+* Thêm phần tử vào một slice
 
-It is common to append new elements to a slice, and so Go provides a built-in
-`append` function. The [[http://golang.org/pkg/builtin/#append][documentation]]
+Việc thêm các phần tử mới vào một slice được sử dụng nhiều, do đó Go cung cấp 
+một hàm `append` để làm việc này. The [[http://golang.org/pkg/builtin/#append][documentation]]
 of the built-in package describes `append`.
 
 	func append(s []T, vs ...T) []T
 
-The first parameter `s` of `append` is a slice of type `T`, and the rest are
-`T` values to append to the slice.
+Tham số đầu tiên `s` của hàm `append` là một slice kiểu `T`, và phần còn lại 
+là các giá trị kiểu `T` được chèn thêm vào slice này.
 
-The resulting value of `append` is a slice containing all the elements of the
-original slice plus the provided values.
+Giá trị trả về của hàm `append` là một slice chứa tất cả các phần tử của slice
+ban đầu cùng với các phần tử mới được thêm vào.
 
-If the backing array of `s` is too small to fit all the given values a bigger
-array will be allocated. The returned slice will point to the newly allocated
-array.
+Nếu mảng bên dưới mà slice `s` trỏ đến quá nhỏ để có thể chứa được cả những giá trị mới thêm vào, 
+thì khi Go sẽ tạo một mảng mới lớn hơn để có thể chứa đủ các giá trị này, và slice trả về sẽ được trỏ đến mảng mới này.
 
-(To learn more about slices, read the [[http://blog.golang.org/go-slices-usage-and-internals][Slices: usage and internals]] article.)
+(Để tìm hiểu thêm về slice, bạn có thể xem thêm bài viết [[http://blog.golang.org/go-slices-usage-and-internals][Slices: usage and internals]].)
 
 .play moretypes/append.go
 
 * Range
 
-The `range` form of the `for` loop iterates over a slice or map.
+Từ khoá `range` dùng trong vòng lặp `for` để lặp qua các phần tử trong một slice hoặc một map.
 
 .play moretypes/range.go
 
-* Range continued
+* Range (tiếp)
 
-You can skip the index or value by assigning to `_`.
+Bạn có thể bỏ qua chỉ số hoặc giá trị bằng cách gán nó cho `_`.
 
-If you only want the index, drop the ", value" entirely.
+Nếu bạn chỉ muốn chỉ số, có thể bỏ hẳn đoạn lệnh ", value".
 
 .play moretypes/range-continued.go
 
-* Exercise: Slices
+* Bài tập: Slices
 
-Implement `Pic`. It should return a slice of length `dy`, each element of which is a slice of `dx` 8-bit unsigned integers. When you run the program, it will display your picture, interpreting the integers as grayscale (well, bluescale) values.
+Cài đặt hàm `Pic`. Nó phải trả lại một slice có độ dài `dy`, mỗi phần tử có độ dài `dx` là các 8-bit số nguyên không dấu. Khi bạn chạy chương trình, nó sẽ hiển thị hình ảnh của bạn, và biểu diễn các số nguyên như là các sắc xám (chính xác hơn là các sắc xanh - bluescale).
 
-The choice of image is up to you. Interesting functions include `(x+y)/2`, `x*y`, and `x^y`.
+Việc chọn hình ảnh là tùy thuộc vào bạn. Một số hàm thú vị có thể kể đến là `(x+y)/2`, `x*y`, and `x^y`.
 
-(You need to use a loop to allocate each `[]uint8` inside the `[][]uint8`.)
+(Bạn cần phải sử dụng vòng lặp để khởi tạo mỗi một slice `[]uint8`  bên trong [][]uint8.) `[][]uint8`.)
 
-(Use `uint8(intValue)` to convert between types.)
+(Sử dụng `uint8(intValue)` để chuyển đổi giữa các kiểu.)
 
 .play moretypes/exercise-slices.go
 
 * Maps
 
-A map maps keys to values.
+Một map là một ánh xạ các khoá (key) vào các giá trị (value).
 
-Maps must be created with `make` (not `new`) before use; the `nil` map is empty and cannot be assigned to.
+Map trước khi sử dụng phải được tạo với `make` (không dùng `new`); `nil` map là một map rỗng và không được gán giá trị cho nó.
 
 .play moretypes/maps.go
 
-* Map literals
+* Khai báo một map
 
-Map literals are like struct literals, but the keys are required.
+Việc khai báo một map giống như việc khai báo một cấu trúc, nhưng các khoá (key) trong một map là bắt buộc phải được khai báo.
 
 .play moretypes/map-literals.go
 
-* Map literals continued
+* Khai báo một map (tiếp)
 
-If the top-level type is just a type name, you can omit it from the elements of the literal.
+Nếu kiểu của giá trị ở mức top của map là một kiểu có tên, thì bạn có thể bỏ tên này trong khai báo từng phần tử của map.
 
 .play moretypes/map-literals-continued.go
 
-* Mutating Maps
+* Thay đổi giá trị của map
 
-Insert or update an element in map `m`:
+Chèn thêm hoặc cập nhật một phần tử vào map `m`:
 
 	m[key] = elem
 
-Retrieve an element:
+Lấy một phần tử:
 
 	elem = m[key]
 
-Delete an element:
+Xóa một phần tử:
 
 	delete(m, key)
 
-Test that a key is present with a two-value assignment:
+Kiểm tra một key có sẵn hay không với một phép gán hai giá trị:
 
 	elem, ok = m[key]
 
-If `key` is in `m`, `ok` is `true`. If not, `ok` is `false` and `elem` is the zero value for the map's element type.
+Nếu `key` có trong `m`, thì `ok` sẽ là `true`. Nếu không, `ok` sẽ là `false` và  `elem` là giá trị zero của kiểu giá trị của phần tử của map.
 
-Similarly, when reading from a map if the key is not present the result is the zero value for the map's element type.
+Tương tự như vậy, khi đọc từ một map, nếu key không có trong map đó, thì một giá trị zero của kiểu của phần tử sẽ được trả về.
 
-_Note_: if `elem` or `ok` have not yet been declared you could use a short declaration form:
+_Chú_ý_: nếu `elem` hoặc `ok` chưa được khai báo trước, bạn có thể sử dụng dạng khai báo ngắn:
 
 	elem, ok := m[key]
 
 .play moretypes/mutating-maps.go
 
-* Exercise: Maps
+* Bài tập: Maps
 
-Implement `WordCount`.  It should return a map of the counts of each “word” in the string `s`. The `wc.Test` function runs a test suite against the provided function and prints success or failure.
+Cài đặt hàm `WordCount`.  Nó phải trả về một map đếm các `word` bên trong một chuỗi kí tự `s`. Hàm `wc.Test` sẽ chạy một bộ test đối với chức năng trên và in ra là thành công hay thất bại.
 
-You might find [[http://golang.org/pkg/strings/#Fields][strings.Fields]] helpful.
+Bạn có thể tìm thấy những thứ hữu ích trong [[http://golang.org/pkg/strings/#Fields][strings.Fields]].
 
 .play moretypes/exercise-maps.go
 
-* Function values
+* Giá trị hàm
 
-Functions are values too.
+Các hàm cũng là các giá trị.
 
 .play moretypes/function-values.go
 
-* Function closures
+* Bao đóng hàm
 
-Go functions may be closures. A closure is a function value that references variables from outside its body. The function may access and assign to the referenced variables; in this sense the function is "bound" to the variables.
+Hàm trong Go có thể là các bao đóng (closure). Một bao đóng là một giá trị hàm có thể tham chiếu đến các biến bên ngoài thân của nó. Một hàm có thể truy cập và gán cho các biến mà nó tham chiếu đến, theo nghĩa này, hàm được coi là "ràng buộc" với các biến này.
 
-For example, the `adder` function returns a closure. Each closure is bound to its own `sum` variable.
+Ví dụ, hàm `adder` trả về một bao đóng. Mỗi một bao đóng sẽ được ràng buộc với biến `sum` của riêng nó.
 
 .play moretypes/function-closures.go
 
-* Exercise: Fibonacci closure
+* Bài tập: Fibonacci closure
 
 Let's have some fun with functions.
 
-Implement a `fibonacci` function that returns a function (a closure) that returns successive fibonacci numbers.
+Bạn hãy cài đặt một hàm `fibonacci` trả về một hàm (một bao đóng) mà bản thân hàm đó trả về một số fibonacci tiếp theo.
 
 .play moretypes/exercise-fibonacci-closure.go
 
-* Congratulations!
+* Chúc mừng!
 
-You finished this lesson!
+Xin chúc mừng! Bạn đã hoàn thành bài học này!
 
-You can go back to the list of [[/list][modules]] to find what to learn next, or continue with the [[javascript:click('.next-page')][next lesson]].
+Bạn có thể quay lại danh sách các [[/list][bài học]] để tìm những gì sẽ học tiếp theo,
+hoặc tiếp tục với [[javascript:click('.next-page')][bài học kế tiếp]].

@@ -1,124 +1,134 @@
-Packages, variables, and functions.
-Learn the basic components of any Go program.
+Các gói, biến và hàm.
+Học về các thành phần cơ bản của một chương trình Go.
 
 The Go Authors
 http://golang.org
 
-* Packages
+* Gói
 
-Every Go program is made up of packages.
+Mọi chương trình Go đều được tạo thành bởi các gói (package).
 
-Programs start running in package `main`.
+Một chương trình sẽ được bắt đầu chạy với gói `main`.
 
-This program is using the packages with import paths `"fmt"` and `"math/rand"`.
+Chương trình ở bên trái sử dụng các gói `"fmt"` và `"math/rand"`.
 
-By convention, the package name is the same as the last element of the import path. For instance, the `"math/rand"` package comprises files that begin with the statement `package`rand`.
+Theo quy ước, tên gói được quy định trùng với thành phần cuối cùng của đường dẫn của gói.
+Ví dụ, bên trong gói `"math/rand"`, các file sẽ được bắt đầu với khai báo `package`rand`.
 
-#appengine: *Note:* the environment in which these programs are executed is
-#appengine: deterministic, so `rand.Intn` will always return the same number.
+#appengine: *Note:* trong môi trường Playground, các chương trình chạy một cách
+#appengine: xác định, vì vậy `rand.Intn` sẽ luôn trả về cùng một số.
 #appengine:
-#appengine: (To see a different number, seed the number generator; see [[http://golang.org/pkg/math/rand/#Seed][`rand.Seed`]].)
+#appengine:
+#appengine: (Để xem một số khác, bạn có thể sử dụng bộ sinh số ngẫu nhiên, 
+#appengine: xem thêm ở [[http://golang.org/pkg/math/rand/#Seed][`rand.Seed`]].)
 
 .play basics/packages.go
 
 * Imports
 
-This code groups the imports into a parenthesized, "factored" import statement. 
+Đoạn code ví dụ gộp nhiều lệnh import vào một cặp dấu ngoặc đơn. 
 
-You can also write multiple import statements, like:
+Bạn cũng có thể viết nhiều lệnh import rời nhau:
 
 	import "fmt"
 	import "math"
 
-But it is good style to use the factored import statement.
+Tuy nhiên, bạn nên dùng cách viết gộp nhiều lệnh import.
 
 .play basics/imports.go
 
-* Exported names
+* Các tên được export
 
-After importing a package, you can refer to the names it exports.
+Sau khi import một gói, bạn có thể sử dụng các tên (biến, hàm, cấu trúc,...) mà gói đó export ra.
 
-In Go, a name is exported if it begins with a capital letter.
+Trong Go, tên biến, hàm, cấu trúc,... sẽ được export nếu nó bắt đầu bằng một chữ cái viết hoa.
 
-`Foo` is an exported name, as is `FOO`. The name `foo` is not exported.
+Ví dụ `Foo` sẽ được export, `FOO` cũng vậy. Nhưng `foo` sẽ không được export.
 
-Run the code. Then rename `math.pi` to `math.Pi` and try it again.
+Bạn hãy thử chạy chương trình. Sau đó thử đổi tên `math.pi` thành `math.Pi` và chạy lại một lần nữa.
 
 .play basics/exported-names.go
 
-* Functions
+* Hàm
 
-A function can take zero or more arguments.
+Một hàm có thể nhận một vài tham số hoặc không có tham số nào.
 
-In this example, `add` takes two parameters of type `int`.
+Trong ví dụ này, hàm `add` nhận hai tham số kiểu `int`.
 
-Notice that the type comes _after_ the variable name.
+Chú ý là kiểu của tham số được đặt _sau_ tên của tham số.
 
-(For more about why types look the way they do, see the [[http://blog.golang.org/gos-declaration-syntax][article on Go's declaration syntax]].)
+(Để biết lý do tại sao Go lại thiết kế như vậy, bạn có thể xem thêm bài viết về 
+[[http://blog.golang.org/gos-declaration-syntax][cú pháp khai báo trong Go]].)
 
 .play basics/functions.go
 
-* Functions continued
+* Hàm (tiếp)
 
-When two or more consecutive named function parameters share a type, you can omit the type from all but the last.
+Khi hai hoặc nhiều tham số liên tiếp nhau có cùng một kiểu, bạn có thể bỏ qua kiểu của chúng, 
+ngoại trừ tham số cuối cùng.
 
-In this example, we shortened
+Trong ví dụ này, chúng ta có thể rút ngắn
 
 	x int, y int
 
-to
+thành
 
 	x, y int
 
 .play basics/functions-continued.go
 
-* Multiple results
+* Trả về nhiều kết quả
 
-A function can return any number of results.
+Một hàm có thể trả về nhiều kết quả.
 
-The `swap` function returns two strings.
+Trong ví dụ này, hàm `swap` trả về hai chuỗi.
 
 .play basics/multiple-results.go
 
-* Named return values
+* Đặt tên giá trị trả về
 
-Go's return values may be named and act just like variables.
+Các giá trị trả về của một hàm có thể được đặt tên và được sử dụng như là các biến.
 
-These names should be used to document the meaning of the return values.
+Tên của các giá  trả về nên được sử dụng để làm rõ nghĩa cho giá trị trả về đó.
 
-A `return` statement without arguments returns the current values of the results. This is known as a "naked" return.
+Một câu lệnh `return` không có tham số sẽ trả về giá trị hiện tại của kết quả. 
 
-Naked return statements should be used only in short functions, as with the example shown here. They can harm readability in longer functions.
+Câu lệnh `return` không có tham số chỉ nên được sử dụng ở những hàm ngắn, như là ví dụ ở đây. 
+Câu lệnh này sẽ làm chương trình trở nên khó đọc hơn ở những hàm dài.
 
 .play basics/named-results.go
 
-* Variables
+* Biến
 
-The `var` statement declares a list of variables; as in function argument lists, the type is last.
+Câu lênh `var` được dùng để khai báo biến; và cũng giống như khai báo danh sách tham số của hàm, 
+kiểu của biến được viết sau tên của biến. 
 
-A `var` statement can be at package or function level. We see both in this example.
+Một câu lệnh `var` có thể đặt ở bên trong một gói hoặc bên trong một hàm. 
+Ví dụ bên cạnh minh hoạ cả hai cách sử dụng đó.
 
 .play basics/variables.go
 
-* Variables with initializers
+* Biến với giá trị khởi tạo
 
-A var declaration can include initializers, one per variable.
+Một khai báo `var` có thể đồng thời kèm theo giá trị khởi tạo cho từng biến.
 
-If an initializer is present, the type can be omitted; the variable will take the type of the initializer.
+Nếu một giá trị khởi tạo được cho trước, thì có thể không cần phải khai báo kiểu, 
+kiểu của biến sẽ là kiểu của giá trị này.
 
 .play basics/variables-with-initializers.go
 
-* Short variable declarations
+* Khai báo ngắn cho biến
 
-Inside a function, the `:=` short assignment statement can be used in place of a `var` declaration with implicit type.
+Bên trong một hàm, có thể dùng câu lệnh gán ngắn `:=` để khai báo cho biến với kiểu ngầm định.
 
-Outside a function, every statement begins with a keyword (`var`, `func`, and so on) and so the `:=` construct is not available.
+Bên ngoài một hàm, mọi câu lệnh đều phải bắt đầu với một từ khoá (`var`, `func`, ...), 
+do đó sẽ không dùng được khai báo ngắn `:=`.
 
 .play basics/short-variable-declarations.go
 
-* Basic types
+* Các kiểu cơ bản
 
-Go's basic types are
+Các kiểu cơ bản của Go
 
 	bool
 
@@ -127,100 +137,105 @@ Go's basic types are
 	int  int8  int16  int32  int64
 	uint uint8 uint16 uint32 uint64 uintptr
 
-	byte // alias for uint8
+	byte // cách gọi khác c uint8
 
-	rune // alias for int32
-	     // represents a Unicode code point
+	rune // cách gọi khác của int32
+	     // biểu diễn một kí tự Unicode
 
 	float32 float64
 
 	complex64 complex128
 
-The example shows variables of several types,
-and also that variable declarations may be "factored" into blocks,
-as with import statements.
+Các lệnh khai báo biến cũng có thể được nhóm lại theo khối, giống như trong khai báo `import`.
 
-The `int`, `uint`, and `uintptr` types are usually 32 bits wide on 32-bit systems and 64 bits wide on 64-bit systems.
-When you need an integer value you should use `int` unless you have a specific reason to use a sized or unsigned integer type.
+Các kiểu `int`, `uint` và `uintptr` sẽ là kiểu số nguyên 32-bit trên các hệ thống 32-bit 
+và là kiểu 64-bit trên các hệ thống 64-bit. Khi cần sử dụng kiểu số nguyên, bạn nên sử dụng `int`, 
+trừ khi bạn có lý do đặc biệt cần sử dụng kiểu số nguyên không dấu.
 
 .play basics/basic-types.go
 
-* Zero values
+* Các giá trị zero
 
-Variables declared without an explicit initial value are given their
-_zero_value_.
+Các biến khi khai báo mà không có giá trị khởi đầu thì sẽ được gán với _giá_trị_zero_ 
+tuỳ theo kiểu của biến.
 
-The zero value is:
 
-- `0` for numeric types,
-- `false` the boolean type, and
-- `""` (the empty string) for strings.
+Các giá trị zero:
+
+- `0` cho kiểu số,
+- `false` cho kiểu boolean, vaf
+- `""` (chuỗi rỗng) cho kiểu chuỗi (string).
 
 .play basics/zero.go
 
-* Type conversions
+* Chuyển đổi kiểu
 
-The expression `T(v)` converts the value `v` to the type `T`.
+Biểu thức `T(v)` sẽ chuyển đổi giá trị `v` sang một giá trị kiểu `T`.
 
-Some numeric conversions:
+Một số chuyển đổi số:
 
 	var i int = 42
 	var f float64 = float64(i)
 	var u uint = uint(f)
 
-Or, put more simply:
+Hoặc đơn giản hơn:
 
 	i := 42
 	f := float64(i)
 	u := uint(f)
 
-Unlike in C, in Go assignment between items of different type requires an
-explicit conversion.
-Try removing the `float64` or `int` conversions in the example and see what happens.
+Không giống như trong C, trong Go, phép gán giữa các biến khác kiểu nhau yêu cầu một phép chuyển đổi 
+kiểu tường minh.
+
+Bạn hãy thử bỏ việc chuyển đổi kiểu sang `float64` hay `int` trong ví dụ mẫu và xem kết quả. 
 
 .play basics/type-conversions.go
 
-* Type inference
+* Suy diễn kiểu 
 
-When declaring a variable without specifying an explicit type (either by using the `:=` syntax or `var`=` expression syntax), the variable's type is inferred from the value on the right hand side.
+Khi khai báo một biến mà không chỉ rõ kiểu của nó (sử dụng từ khoá `var` và không khai báo kiểu, 
+hoặc sử dụng `:=`), kiểu của biến sẽ được _suy_diễn_ từ giá trị phía bên phải của phép gán.
 
-When the right hand side of the declaration is typed, the new variable is of that same type:
+Khi phía bên phải của khai báo có kiểu, thì biến mới sẽ có cùng một kiểu:
 
 	var i int
-	j := i // j is an int
+	j := i // j sẽ là kiểu int
 
-But when the right hand side contains an untyped numeric constant, the new variable may be an `int`, `float64`, or `complex128` depending on the precision of the constant:
+Nhưng khi bên phải của phép gán là một hằng số không định kiểu, thì biến mới có thể là `int`,
+`float64` hoặc `complex128` tuỳ thuộc vào độ chính xác (precision) của hằng số đó:
 
 	i := 42           // int
 	f := 3.142        // float64
 	g := 0.867 + 0.5i // complex128
 
-Try changing the initial value of `v` in the example code and observe how its type is affected.
+Bạn hãy thử thay đổi giá trị khởi tạo của `v` trong ví dụ mẫu và xem kiểu của nó bị thay đổi 
+như thế nào.
 
 .play basics/type-inference.go
 
-* Constants
+* Hằng 
 
-Constants are declared like variables, but with the `const` keyword.
+Hằng (constant) được khai báo như biến, nhưng với từ khoá `const`.
 
-Constants can be character, string, boolean, or numeric values.
+Hằng có thể là kí tự, chuỗi, boolean, hoặc một giá trị số.
 
-Constants cannot be declared using the `:=` syntax.
+Hằng không thể được định nghĩa bằng cú pháp `:=`.
 
 .play basics/constants.go
 
-* Numeric Constants
+* Hằng số 
 
-Numeric constants are high-precision _values_.
+Hằng số (numeric constants) là các giá trị có độ chính xác cao (high-precision).
 
-An untyped constant takes the type needed by its context.
+Hằng số không được định kiểu, và kiểu của nó sẽ được xác định tuỳ thuộc vào hoàn cảnh sử dụng nó.
 
-Try printing `needInt(Big)` too.
+Bạn hãy thử in kết quả của `needInt(Big)`.
 
 .play basics/numeric-constants.go
 
-* Congratulations!
+* Chúc mừng!
 
-You finished this lesson!
+Bạn đã hoàn thành bài học này!
 
-You can go back to the list of [[/list][modules]] to find what to learn next, or continue with the [[javascript:click('.next-page')][next lesson]].
+Bạn có thể quay lại danh sách các [[/list][bài học]] để tìm những gì sẽ học tiếp theo,
+hoặc tiếp tục với [[javascript:click('.next-page')][bài học kế tiếp]].

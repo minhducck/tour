@@ -9,23 +9,23 @@ angular.module('tour.values', []).
 // List of modules with description and lessons in it.
 value('tableOfContents', [{
     'id': 'mechanics',
-    'title': 'Using the tour',
-    'description': '<p>Welcome to a tour of the <a href="http://golang.org">Go programming language</a>. The tour covers the most important features of the language, mainly:</p>',
+    'title': 'Cách sử dụng',
+    'description': '<p>Chào mừng bạn đến với chuyến tham quan vào <a href="http://golang.org">ngôn ngữ lập trình Go</a>. Chuyến tham quan này sẽ bao gồm các tính năng quan trọng nhất của ngôn ngữ:</p>',
     'lessons': ['welcome']
 }, {
     'id': 'basics',
-    'title': 'Basics',
-    'description': '<p>The starting point, learn all the basics of the language.</p><p>Declaring variables, calling functions, and all the things you need to know before moving to the next lessons.</p>',
+    'title': 'Cơ bản',
+    'description': '<p>Đây là điểm khởi đầu để bạn tìm hiểu những điều cơ bản nhất của ngôn ngữ Go</p><p>Cách khai báo biến, cách gọi hàm và tất cả những điều bạn cần biết trước khi vào bài học tiếp theo.</p>',
     'lessons': ['basics', 'flowcontrol', 'moretypes']
 }, {
     'id': 'methods',
-    'title': 'Methods and interfaces',
-    'description': '<p>Learn how to define methods on types, how to declare interfaces, and how to put everything together.</p>',
+    'title': 'Phương thức và giao diện',
+    'description': '<p>Tìm hiểu cách định nghĩa các phương thức trên các kiểu dữ liệu, cách khai báo một giao diện, và làm thế nào để mọi thứ có thể làm việc được với nhau.</p>',
     'lessons': ['methods']
 }, {
     'id': 'concurrency',
-    'title': 'Concurrency',
-    'description': '<p>Go provides concurrency features as part of the core language.</p><p>This module goes over goroutines and channels, and how they are used to implement different concurrency patterns.</p>',
+    'title': 'Lập trình đồng thời',
+    'description': '<p>Go cung cấp tính năng lập trình đồng thời như là một phần lõi của ngôn ngữ.</p><p>Bài học này giới thiệu về goroutine, kênh và cách sử dụng chúng để cài đặt các chương trình chạy đồng thời.</p>',
     'lessons': ['concurrency']
 }]).
 
@@ -41,7 +41,7 @@ value('translation', {
     'run': 'Run',
     'compile': 'Compile and Run',
     'more': 'Options',
-    'toc': 'Table of Contents',
+    'toc': 'Mục lục',
     'prev': 'Previous',
     'next': 'Next',
     'waiting': 'Waiting for remote server...',
@@ -49,7 +49,7 @@ value('translation', {
     'submit-feedback': 'Send feedback about this page',
 
     // GitHub issue template: update repo and messaging when translating.
-    'github-repo': 'github.com/golang/go',
+    'github-repo': 'github.com/tamnd/tour',
     'issue-title': 'tour: [REPLACE WITH SHORT DESCRIPTION]',
     'issue-message': 'Change the title above to describe your issue and add your feedback here, including code if necessary',
     'context': 'Context',

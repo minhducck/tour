@@ -1,103 +1,100 @@
-Methods and interfaces
-This lesson covers methods and interfaces, the constructs that define objects and their behavior.
+Phương thức và giao diện
+Học về phương thức và giao diện, cách định nghĩa các đối tượng và hành vi của nó.
 
 The Go Authors
 http://golang.org
 
-* Methods
+* Phương thức
 
-Go does not have classes. However, you can define methods on struct types.
+Go không có lớp (class). Tuy nhiên, bạn có thể định nghĩa phương thức (method) trên kiểu dữ liệu cấu trúc.
 
-The _method_receiver_ appears in its own argument list between the `func` keyword and the method name.
+_Bộ_nhận_ của phương thức (_method_receiver_) sẽ được đặt giữa từ khoá `func` và tên của phương thức đó.
 
 .play methods/methods.go
 
-* Methods continued
+* Phương thức (tiếp)
 
-You can declare a method on _any_ type that is declared in your package, not just struct types.
+Bạn có thể khai báo một phương thức trên _mọi_ kiểu trong gói của bạn, không chỉ trên kiểu cấu trúc.
 
-However, you cannot define a method on a type from another package (including built in types).
+Tuy nhiên, bạn không thể khai báo một phương thức trên một kiểu của một gói khác (bao gồm cả các kiểu built-in).
 
 .play methods/methods-continued.go
 
-* Methods with pointer receivers
+* Phương thức với bộ nhận con trỏ
 
-Methods can be associated with a named type or a pointer to a named type.
+Các phương thức có thể liên kết với một kiểu có tên hoặc một con trỏ đến một kiểu có tên.
 
-We just saw two `Abs` methods. One on the `*Vertex` pointer type and the other on the `MyFloat` value type.
+Ở đây chúng ta thấy có hai phương thức `Abs`. Một phương thức trên kiểu con trỏ `*Vertex` và một phương thức khác trên kiểu giá trị `MyFloat`.
 
-There are two reasons to use a pointer receiver. First, to avoid copying the value on each method call (more efficient if the value type is a large struct). Second, so that the method can modify the value that its receiver points to.
+Có hai lý do để sử dụng một bộ nhận con trỏ. Trước tiên, để tránh việc sao chép giá trị trên mỗi lời gọi phương thức (sẽ hiệu quả hơn nếu kiểu giá trị là một cấu trúc lớn). Thứ hai, sử dụng bộ tiếp nhận con trỏ thì phương thức có thể thay đổi giá trị của cấu trúc mà con trỏ này trỏ đến.
 
-Try changing the declarations of the `Abs` and `Scale` methods to use `Vertex` as the receiver, instead of `*Vertex`.
+Bạn hãy thử thay đổi khai báo của phương thức `Abs` và `Scale` và sử dụng `Vertex` như là bộ thu nhận, thay vì `*Vertex`.
 
-The `Scale` method has no effect when `v` is a `Vertex`. `Scale` mutates `v`. When `v` is a value (non-pointer) type, the method sees a copy of the `Vertex` and cannot mutate the original value.
+Phương thức `Scale` không có tác dụng khi `v` là kiểu `Vertex`. `Scale` thay đổi `v`. Khi `v` là một kiểu giá trị (không phải là con trỏ), phương thức này chỉ thấy một bản sao của `Vertex`, và do đó không thể thay đổi giá trị gốc.
 
-`Abs` works either way. It only reads `v`. It doesn't matter whether it is reading the original value (through a pointer) or a copy of that value.
+`Abs` hoạt động theo cách khác. Nó chỉ đọc giá trị của `v`. Do đó không quan trọng việc nó đọc giá trị gốc (thông qua con trỏ) hay là đọc bản sao của giá trị này.
 
 .play methods/methods-with-pointer-receivers.go
 
-* Interfaces
+* Giao diện
 
-An interface type is defined by a set of methods.
+Một giao diện (interface) được xác định bởi một tập hợp các phương thức.
 
-A value of interface type can hold any value that implements those methods.
+Một giá trị của một kiểu giao diện có thể chứa bất kì giá trị nào mà cài đặt các phương thức đó.
 
-*Note:* There is an error in the example code on line 22.
-`Vertex` (the value type) doesn't satisfy `Abser` because	
-the `Abs` method is defined only on `*Vertex` (the pointer type).
+*Chú*ý:* Có lỗi ở dòng 22 ở đoạn code mẫu.
+
+`Vertex` (kiểu giá trị) không đáp ứng giao diện `Abser` vì phương thức `Abs` chỉ được định nghĩa cho con trỏ `*Vertex` (kiểu con trỏ).
 
 .play methods/interfaces.go
 
-* Interfaces are satisfied implicitly
+* Giao diện được cài đặt ngầm định
 
-A type implements an interface by implementing the methods.
-There is no explicit declaration of intent; no "implements" keyword. 
+Một kiểu sẽ cài đặt cho một giao diện bằng cách cài đặt tất cả các phương thức của giao diện đó.
 
-Implicit interfaces decouple implementation packages from the packages that define the interfaces: neither depends on the other.
+Bạn không cần phải khai báo tường minh là kiểu nào cài đặt giao diện nào, không cần phải có từ khoá "implements".
 
-It also encourages the definition of precise interfaces, because you don't have to find every implementation and tag it with the new interface name.
+Việc cài đặt ngầm các giao diện tách việc phụ thuộc giữa các gói cài đặt giao diện khỏi các gói chứa định nghĩa giao diện: không có sự phụ thuộc lẫn nhau nào giữa các gói đó.
 
-[[http://golang.org/pkg/io/][Package io]] defines `Reader` and `Writer`; you don't have to.
+Nó cũng khuyến khích việc định nghĩa các giao diện chính xác, vì bạn không cần phải tìm tất cả các cài đặt và gán nhãn cho nó với tên của giao diện mới.
+
+Ví dụ, gói [[http://golang.org/pkg/io/][io]] định nghĩa các giao diện `Reader` và `Writer`; do đó bạn không cần phải định nghĩa lại.
 
 .play methods/interfaces-are-satisfied-implicitly.go
 
 * Stringers
 
-One of the most ubiquitous interfaces is [[//golang.org/pkg/fmt/#Stringer][`Stringer`]] defined by the [[//golang.org/pkg/fmt/][`fmt`]] package.
+Một trong những giao diện phổ biến nhất là [[//golang.org/pkg/fmt/#Stringer][`Stringer`]] được định nghĩa bởi gói [[//golang.org/pkg/fmt/][`fmt`]].
 
 	type Stringer interface {
 		String() string
 	}
 
-A `Stringer` is a type that can describe itself as a string. The `fmt` package
-(and many others) look for this interface to print values.
+Một `Stringer` là một kiểu mà có thể tự mô tả chính nó như là một chuỗi (string). Gói `fmt` (và rất nhiều gói khác) sẽ tìm giao diện này và dùng nó để in giá trị ra.
 
 .play methods/stringer.go
 
-* Exercise: Stringers
+* Bài tập: Stringers
 
-Make the `IPAddr` type implement `fmt.Stringer` to print the address as
-a dotted quad.
+Bạn hãy cài đặt giao diện `fmt.Stringer` cho kiểu `IPAddr` để nó có thể in địa chỉ ra dưới dạng bộ 4 số ngăn cách bởi dấu chấm.
 
-For instance, `IPAddr{1,`2,`3,`4}` should print as `"1.2.3.4"`.
+Ví dụ, `IPAddr{1,`2,`3,`4}` sẽ in ra `"1.2.3.4"`.
 
 .play methods/exercise-stringer.go
 
 * Errors
 
-Go programs express error state with `error` values. 
+Go quản lý lỗi với kiểu giá trị `error`.
 
-The `error` type is a built-in interface similar to `fmt.Stringer`:
+Kiểu `error` là một giao diện có sẵn của Go, tương tự như `fmt.Stringer`:
 
 	type error interface {
 		Error() string
 	}
 
-(As with `fmt.Stringer`, the `fmt` package looks for the `error` interface when
-printing values.)
+(Giống như với `fmt.Stringer`, gói `fmt` sẽ tìm kiếm giao diện `error` khi cần in kết quả ra.)
 
-Functions often return an `error` value, and calling code should handle errors
-by testing whether the error equals `nil`.
+Các hàm thường trả về một giá trị lỗi, và đoạn code gọi nó sẽ xử lý lỗi này bằng các kiểm tra xem lỗi này có là `nil` hay không.
 
 	i, err := strconv.Atoi("42")
 	if err != nil {
@@ -105,76 +102,71 @@ by testing whether the error equals `nil`.
 	}
 	fmt.Println("Converted integer:", i)
 
-A nil `error` denotes success; a non-nil `error` denotes failure.
+Khi `error` là `nil` có nghĩa là không có lỗi, còn khi `error` khác `nil` có nghĩa là có lỗi xảy ra.
 
 .play methods/errors.go
 
-* Exercise: Errors
+* Bài tập: Errors
 
-Copy your `Sqrt` function from the [[/flowcontrol/8][earlier exercise]] and modify it to return an `error` value.
+Copy hàm `Sqrt` của bạn từ [[/flowcontrol/8][bài tập trước]] và sửa nó để có thể trả về một giá trị `error`. 
 
-`Sqrt` should return a non-nil error value when given a negative number, as it doesn't support complex numbers.
+Hàm `Sqrt` nên trả về một giá trị khác `nil` khi đầu vào là một số âm, vì nó không hỗ trợ số phức.
 
-Create a new type
+Bạn hãy tạo một kiểu mới
 
 	type ErrNegativeSqrt float64
 
-and make it an `error` by giving it a
+và làm cho nó thành kiểu `error` bằng cách định nghĩa cho nó một phương thức
 
 	func (e ErrNegativeSqrt) Error() string
 
-method such that `ErrNegativeSqrt(-2).Error()` returns `"cannot`Sqrt`negative`number:`-2"`.
+sao cho `ErrNegativeSqrt(-2).Error()` trả về `"cannot`Sqrt`negative`number:`-2"`.
 
-*Note:* a call to `fmt.Sprint(e)` inside the `Error` method will send the program into an infinite loop. You can avoid this by converting `e` first: `fmt.Sprint(float64(e))`. Why?
+*Chú*ý:* Lời gọi đến `fmt.Sprint(e)` bên trong phương thức `Error` sẽ khiến chương trình rơi vào một vòng lặp vô hạn. Bạn có thể tránh được điều này bằng cách chuyển đổi kiểu của `e` trước: `fmt.Sprint(float64(e))`. Tại sao lại như vậy?
 
-Change your `Sqrt` function to return an `ErrNegativeSqrt` value when given a negative number.
+Hãy thay đổi hàm `Sqrt` của bạn để có thể trả về một giá trị `ErrNegativeSqrt` khi đầu vào là một số âm.
 
 .play methods/exercise-errors.go
 
 * Readers
 
-The `io` package specifies the `io.Reader` interface,
-which represents the read end of a stream of data.
+Gói `io` định nghĩa một giao diện `io.Reader` dùng để đọc một dòng dữ liệu đầu vào.
 
-The Go standard library contains [[http://golang.org/search?q=Read#Global][many implementations]] of these interfaces, including files, network connections, compressors, ciphers, and others.
+Thư viện chuẩn của Go chứa [[http://golang.org/search?q=Read#Global][rất nhiều cài đặt khác nhau]] của giao diện này, dùng để đọc một dòng dữ liệu từ file, từ kết nối mạng, từ các tập tin nén, từ dữ liệu được mã hoá, và rất nhiều nguồn khác.
 
-The `io.Reader` interface has a `Read` method:
+Giao diện `io.Reader` có một phương thức `Read`:
 
 	func (T) Read(b []byte) (n int, err error)
 
-`Read` populates the given byte slice with data and returns the number of bytes
-populated and an error value. It returns an `io.EOF` error when the stream
-ends.
+Hàm `Read` sẽ đọc một mảng byte vào slice `b` và trả về số byte đã đọc được và một giá trị `error` (nếu có). Nó sẽ trả về một giá trị error `io.EOF` nếu hết dòng dữ liệu.
 
-The example code creates a 
-[[//golang.org/pkg/strings/#Reader][`strings.Reader`]].
-and consumes its output 8 bytes at a time.
+Ví dụ mẫu tạo một kiểu [[//golang.org/pkg/strings/#Reader][`strings.Reader`]]
+và đọc mỗi một lần 8 byte một.
 
 .play methods/reader.go
 
-* Exercise: Readers
+* Bài tập: Readers
 
-Implement a `Reader` type that emits an infinite stream of the ASCII character
-`'A'`.
+Bạn hãy thử cài đặt một kiểu `Reader` mà nó đọc ra một dòng vô hạn các kí tự ASCII `'A'`.
 
 .play methods/exercise-reader.go
 
-* Exercise: rot13Reader
+* Bài tập: rot13Reader
 
-A common pattern is an [[http://golang.org/pkg/io/#Reader][io.Reader]] that wraps another `io.Reader`, modifying the stream in some way.
+Một mẫu thường dùng là một kiểu [[http://golang.org/pkg/io/#Reader][io.Reader]] gói một `io.Reader` vào bên trong nó, và sửa luồng dữ liệu mà nó đọc vào theo một cách nào đó.
 
-For example, the [[http://golang.org/pkg/compress/gzip/#NewReader][gzip.NewReader]] function takes an `io.Reader` (a stream of compressed data) and returns a `*gzip.Reader` that also implements `io.Reader` (a stream of the decompressed data).
+Ví dụ, hàm [[http://golang.org/pkg/compress/gzip/#NewReader][gzip.NewReader]] nhận một kiểu `io.Reader` (một luồng dữ liệu đã được nén) và trả về một kiểu `*gzip.Reader` (một luồng dữ liệu đã được giải nén).
 
-Implement a `rot13Reader` that implements `io.Reader` and reads from an `io.Reader`, modifying the stream by applying the [[http://en.wikipedia.org/wiki/ROT13][rot13]] substitution cipher to all alphabetical characters.
+Bạn hãy cài đặt giao diện `io.Reader` cho kiểu `rot13Reader`, đọc dữ liệu từ một `io.Reader` khác, thay đổi dòng dữ liệu bằng cách áp dụng mật mã thay thế [[http://en.wikipedia.org/wiki/ROT13][rot13]] trên tất cả các kí tự alphabet.
 
-The `rot13Reader` type is provided for you.
-Make it an `io.Reader` by implementing its `Read` method.
+Kiểu dữ liệu `rot13Reader` đã được viết sẵn cho bạn.
+Bạn hãy biến nó thành một `io.Reader` bằng cách cài đặt phương thức `Read` cho nó.
 
 .play methods/exercise-rot-reader.go
 
-* Web servers
+* Web server
 
-[[http://golang.org/pkg/net/http/][Package http]] serves HTTP requests using any value that implements `http.Handler`:
+Gói [[http://golang.org/pkg/net/http/][http]] đáp ứng các truy vấn HTTP bằng cách sử dụng bất kì kiểu nào cài đặt giao diện `http.Handler`:
 
 	package http
 
@@ -182,19 +174,19 @@ Make it an `io.Reader` by implementing its `Read` method.
 		ServeHTTP(w ResponseWriter, r *Request)
 	}
 
-In this example, the type `Hello` implements `http.Handler`.
+Trong ví dụ này, kiểu `Hello` cài đặt giao diện `http.Handler`.
 
-Visit [[http://localhost:4000/][http://localhost:4000/]] to see the greeting.
+Bạn hãy thử truy cập [[http://localhost:4000/][http://localhost:4000/]] để xem lời chào.
 
-#appengine: *Note:* This example won't run through the web-based tour user
-#appengine: interface. To try writing web servers you may want to
-#appengine: [[http://golang.org/doc/install/][Install Go]].
+#appengine: *Chú*ý:* Ví dụ web server này sẽ không chạy được ở đây.
+#appengine: Để có thể chạy được, bạn có thể
+#appengine: [[http://golang.org/doc/install/][cài đặt Go]] trên máy của bạn.
 
 .play methods/web-servers.go
 
-* Exercise: HTTP Handlers
+* Bài tập: HTTP Handlers
 
-Implement the following types and define ServeHTTP methods on them. Register them to handle specific paths in your web server.
+Cài đặt các kiểu sau và định nghĩa phương thức `ServeHTTP` trên chúng. Đăng kí chúng để có thể xử lý được các đường dẫn cụ thể trên web server của bạn.
 
 	type String string
 
@@ -204,20 +196,20 @@ Implement the following types and define ServeHTTP methods on them. Register the
 		Who      string
 	}
 
-For example, you should be able to register handlers using:
+Ví dụ, bạn có thể đăng kí để xử lý truy vấn đến các đường dẫn:
 
 	http.Handle("/string", String("I'm a frayed knot."))
 	http.Handle("/struct", &Struct{"Hello", ":", "Gophers!"})
 
-#appengine: *Note:* This example won't run through the web-based tour user
-#appengine: interface. To try writing web servers you may want to
-#appengine: [[http://golang.org/doc/install/][Install Go]].
+#appengine: *Chú*ý:* Ví dụ web server này sẽ không chạy được ở đây.
+#appengine: Để có thể chạy được, bạn có thể
+#appengine: [[http://golang.org/doc/install/][cài đặt Go]] trên máy của bạn.
 
 .play methods/exercise-http-handlers.go
 
 * Images
 
-[[http://golang.org/pkg/image/#Image][Package image]] defines the `Image` interface:
+Gói [[http://golang.org/pkg/image/#Image][image]] định nghĩa một giao diện `Image`:
 
 	package image
 
@@ -227,32 +219,31 @@ For example, you should be able to register handlers using:
 		At(x, y int) color.Color
 	}
 
-*Note*: the `Rectangle` return value of the `Bounds` method is actually an
-[[http://golang.org/pkg/image/#Rectangle][`image.Rectangle`]], as the
-declaration is inside package `image`.
+*Chú*ý* Phương thức `Bounds` trả về một kiểu giá trị `Retangle`, thực chất là một kiểu giá trị [[http://golang.org/pkg/image/#Rectangle][`image.Rectangle`]] được định nghĩa bên trong gói `image`.
 
-(See [[http://golang.org/pkg/image/#Image][the documentation]] for all the details.)
+(Xem thêm [[http://golang.org/pkg/image/#Image][pkg/image]] để biết thêm chi tiết.)
 
-The `color.Color` and `color.Model` types are also interfaces, but we'll ignore that by using the predefined implementations `color.RGBA` and `color.RGBAModel`. These interfaces and types are specified by the [[http://golang.org/pkg/image/color/][image/color package]]
+Các kiểu `color.Color` và `color.Model` cũng là các giao diện, nhưng chúng ta bỏ qua điều này bằng cách sử dụng các cài đặt đã có `color.RGBA` và `color.RGBAModel`. Các giao diện và các kiểu này có thể được tìm thấy trong gói [[http://golang.org/pkg/image/color/][image/color]].
 
 .play methods/images.go
 
-* Exercise: Images
+* Bài tập: Images
 
-Remember the picture generator you wrote earlier? Let's write another one, but this time it will return an implementation of `image.Image` instead of a slice of data.
+Bạn còn nhớ bộ sịnh hình ảnh mà bạn đã viết? Hãy viết một cái khác, nhưng lần này là cài đặt một giao diện `image.Image` thay vì việc nó là một slice.
 
-Define your own `Image` type, implement [[http://golang.org/pkg/image/#Image][the necessary methods]], and call `pic.ShowImage`.
+Định nghĩa kiểu `Image` của riêng bạn, cài đặt các [[http://golang.org/pkg/image/#Image][phương thức cần thiết]] của giao diện `image.Image`, và gọi hàm `pic.ShowImage`.
 
-`Bounds` should return a `image.Rectangle`, like `image.Rect(0,`0,`w,`h)`.
+Hàm `Bounds` phải trả về một `image.Rectangle`, ví dụ như `image.Rect(0,`0,`w,`h)`.
 
-`ColorModel` should return `color.RGBAModel`.
+Hàm `ColorModel` trả về một `color.RGBAModel`.
 
-`At` should return a color; the value `v` in the last picture generator corresponds to `color.RGBA{v,`v,`255,`255}` in this one.
+Hàm `At` trả về một màu; giá trị `v` trong bộ sinh ảnh của bài tập trước sẽ tương ứng với `color.RGBA{v,`v,`255,`255}` trong bài tập này.
 
 .play methods/exercise-images.go
 
-* Congratulations!
+* Chúc mừng!
 
-You finished this lesson!
+Bạn đã hoàn thành bài học này!
 
-You can go back to the list of [[/list][modules]] to find what to learn next, or continue with the [[javascript:click('.next-page')][next lesson]].
+Bạn có thể quay lại danh sách các [[/list][bài học]] để tìm những gì sẽ học tiếp theo,
+hoặc tiếp tục với [[javascript:click('.next-page')][bài học kế tiếp]].
